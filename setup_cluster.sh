@@ -1,4 +1,4 @@
-# gcloud container clusters delete ${CLUSTER_NAME} --zone=${ZONE} --quiet
+export PATH=$PATH:/home/codespace/google-cloud-sdk/bin
 
 gcloud auth login
 
