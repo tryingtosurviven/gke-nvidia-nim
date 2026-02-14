@@ -12,14 +12,17 @@ export CLUSTER_MACHINE_TYPE=e2-standard-4
 export GPU_TYPE=nvidia-l4
 export GPU_COUNT=1
 
-# 2. Grab the Secret from GitHub (Added the $ and { })
+# Add NGC to Path
+export PATH=$PATH:$(pwd)/ngc-cli
+
+# 2. Grab the Secret from GitHub
 export NGC_CLI_API_KEY="${NVIDIA_GKE_NIM_MLH2026_API_KEY}"
 
-# 3. Securely Login to NVIDIA (Automated for scripts)
+# 3. Securely Login to NVIDIA
 ngc config set --api-key $NGC_CLI_API_KEY
 echo "$NGC_CLI_API_KEY" | docker login nvcr.io --username '$oauthtoken' --password-stdin
 
-# 4. Create GKE Cluster
+# 4. Create GKE Cluster (This takes 5-10 minutes)
 gcloud container clusters create ${CLUSTER_NAME} \
     --project=${PROJECT_ID} \
     --location=${ZONE} \
@@ -35,7 +38,6 @@ gcloud container node-pools create gpupool \
     --cluster=${CLUSTER_NAME} \
     --machine-type=${NODE_POOL_MACHINE_TYPE} \
     --num-nodes=1
-
 #Deploy and test NVIDIA NIM
 helm fetch https://helm.ngc.nvidia.com/nim/charts/nim-llm-1.3.0.tgz --username='$oauthtoken' --password=$NGC_CLI_API_KEY
 
